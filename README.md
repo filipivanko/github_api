@@ -3,7 +3,9 @@
 ## Project installation
 ### Prerequisites
 if not installed; install PHP, Symfony CLI and Composer for your OS
+
 The project used PHP 8.1, Symfony CLI 5.5.1 and Composer 2.5.4
+
 if on Windows; enable SQLite driver
 
 ### Install
