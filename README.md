@@ -37,9 +37,10 @@ for route 127.0.0.1:8000/score/php
 ```
 term represents the word that is searched for in the remote repository
 the score ranges from 0 to 10 and represents the ratio between the number of occurrences of the term followed by the word rocks and the occurrences of the term followed by the word sucks.
+all new search term are fetched form the remote repository score is calculated and stored in local database and returned to user, if the term has been searched before, score from the database is returned
 
 ## database
-SQLite database is included in the project(this is just for easier testing, I know its bad practice :) )
+SQLite database with data is included in the project(this is just for easier testing, I know its bad practice :) )
 
 ## authentication
 X-AUTH-TOKEN authentication header
