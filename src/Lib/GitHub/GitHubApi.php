@@ -18,32 +18,36 @@ class GitHubApi implements CountApi
         $this->apiState = State::OK;
     }
 
-    public function getRocksCount($searchTerm){
+    public function getRocksCount($searchTerm): int
+    {
         try {
-            $rocks_response = $this->client->request('GET', 'https://api.github.com/search/issues?q=' . $searchTerm . " rocks");
+            $rocksResponse = $this->client->request(
+                'GET',
+                'https://api.github.com/search/issues?q=' . $searchTerm . " rocks"
+            );
 
-            return json_decode($rocks_response->getContent())->total_count;
-
-        } catch (\Exception $e){
+            return json_decode($rocksResponse->getContent())->total_count;
+        } catch (\Exception $e) {
             $this->apiState = State::Error;
 
             return -1;
         }
-
     }
 
-    public function getSucksCount($searchTerm){
+    public function getSucksCount($searchTerm): int
+    {
         try {
-            $sucks_response =$this->client->request('GET', 'https://api.github.com/search/issues?q=' . $searchTerm . " sucks");
+            $sucksResponse = $this->client->request(
+                'GET',
+                'https://api.github.com/search/issues?q=' . $searchTerm . " sucks"
+            );
 
-            return json_decode($sucks_response->getContent())->total_count;
-
-        } catch (\Exception $e){
+            return json_decode($sucksResponse->getContent())->total_count;
+        } catch (\Exception $e) {
             $this->apiState = State::Error;
 
             return -1;
         }
-
     }
 
     public function getApiStatus(): State

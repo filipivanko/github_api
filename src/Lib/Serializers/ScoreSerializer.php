@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Lib\Serializer;
+namespace App\Lib\Serializers;
 
 use App\Entity\ResultsRecord;
 
@@ -10,14 +10,12 @@ class ScoreSerializer
     {
         $term = $result->getSearchTerm();
         $score = $result->getScore();
-        $resource = [
+        return [
           "data"=>[
               "term"=>$term,
             "score"=>$score
           ]
         ];
-
-        return $resource;
     }
 
     public function cantReachRemoteApi()

@@ -12,36 +12,37 @@ class ScorePersistenceHelper
     private ResultsRecordRepository $recordRepository;
     private State $resultState;
     private ScoreCalculator $calculator;
+    private CountApi $api;
 
-    public function __construct (ResultsRecordRepository $recordRepository)
+    public function __construct(ResultsRecordRepository $recordRepository, CountApi $api)
     {
         $this->recordRepository = $recordRepository;
+        $this->api = $api;
     }
 
-    public function getResult ($search_term, CountApi $api): ?ResultsRecord
+    public function getResult($searchTerm): ?ResultsRecord
     {
-        $stored_result = $this->recordRepository->findOneBy(['search_term' => $search_term]);
+        $storedResult = $this->recordRepository->findOneBy(['search_term' => $searchTerm]);
 
-        if (!empty($stored_result)) {
+        if (!empty($storedResult)) {
             $this->resultState = State::OK;
 
-            return $stored_result;
+            return $storedResult;
         }
 
-        $this->calculator = new ScoreCalculator($search_term, $api);
+        $this->calculator = new ScoreCalculator($searchTerm, $this->api);
         $this->resultState = $this->calculator->getResultStatus();
 
-        if($this->getResultStatus() == State::OK){
+        if ($this->getResultStatus() == State::OK) {
             $score = $this->calculator->getScore();
 
-            return $this->store($score, $search_term);
-
+            return $this->store($score, $searchTerm);
         } else {
-            $null_record = new ResultsRecord();
-            $null_record->setScore(-1);
-            $null_record->setSearchTerm("");
+            $nullRecord = new ResultsRecord();
+            $nullRecord->setScore(-1);
+            $nullRecord->setSearchTerm("");
 
-            return $null_record;
+            return $nullRecord;
         }
     }
 
@@ -50,14 +51,14 @@ class ScorePersistenceHelper
         return $this->resultState;
     }
 
-    private function store ($score, $search_term): ResultsRecord
+    private function store($score, $searchTerm): ResultsRecord
     {
-        $new_results_record = new ResultsRecord();
+        $newResultsRecord = new ResultsRecord();
 
-        $new_results_record->setScore($score);
-        $new_results_record->setSearchTerm($search_term);
-        $this->recordRepository->save($new_results_record, true);
+        $newResultsRecord->setScore($score);
+        $newResultsRecord->setSearchTerm($searchTerm);
+        $this->recordRepository->save($newResultsRecord, true);
 
-        return $new_results_record;
+        return $newResultsRecord;
     }
 }

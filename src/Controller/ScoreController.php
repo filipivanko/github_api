@@ -6,28 +6,28 @@ use App\Lib\Enum\State;
 use App\Lib\GitHub\GitHubApi;
 use App\Lib\PersistenceHelper\ScorePersistenceHelper;
 use App\Repository\ResultsRecordRepository;
-use App\Lib\Serializer\ScoreSerializer;
+use App\Lib\Serializers\ScoreSerializer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-
 class ScoreController extends AbstractController
 {
-    public function score(ResultsRecordRepository $recordRepository, $search_term): Response
+    public function score(ResultsRecordRepository $recordRepository, $searchTerm): Response
     {
         $gitHubApi = new GitHubApi();
-        $scorePersistenceHelper = new ScorePersistenceHelper($recordRepository);
-        $result = $scorePersistenceHelper->getResult($search_term, $gitHubApi);
+        $scorePersistenceHelper = new ScorePersistenceHelper($recordRepository, $gitHubApi);
+        $result = $scorePersistenceHelper->getResult($searchTerm);
         $scoreSerializer = new ScoreSerializer();
 
-        switch ($scorePersistenceHelper->getResultStatus()){
-            case State::OK:
-                return new JsonResponse($scoreSerializer->convertToResponseResource($result),Response::HTTP_OK);
-            case State::Error:
-                return new JsonResponse($scoreSerializer->cantReachRemoteApi(),Response::HTTP_SERVICE_UNAVAILABLE);
-            case State::ZeroResults:
-                return new JsonResponse($scoreSerializer->noResults(),Response::HTTP_OK);
-        }
+        return match ($scorePersistenceHelper->getResultStatus()) {
+            State::OK => new JsonResponse($scoreSerializer->convertToResponseResource($result), Response::HTTP_OK),
+            State::Error => new JsonResponse(
+                $scoreSerializer->cantReachRemoteApi(),
+                Response::HTTP_SERVICE_UNAVAILABLE
+            ),
+            State::ZeroResults => new JsonResponse($scoreSerializer->noResults(), Response::HTTP_OK),
+            default => new JsonResponse("", Response::HTTP_OK),
+        };
     }
 }

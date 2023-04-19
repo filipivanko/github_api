@@ -5,5 +5,5 @@ controllers:
     type: attribute
 
 app_github_api:
-    path: /score/{search_term}
+    path: /score/{searchTerm}
     controller: App\Controller\ScoreController::score

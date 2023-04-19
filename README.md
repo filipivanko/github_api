@@ -22,7 +22,7 @@ symfony server:start
 ```
 
 ## local endpoint
-http://127.0.0.1:8000/score/{search_term}
+http://127.0.0.1:8000/score/{searchTerm}
 
 ## response
 for route 127.0.0.1:8000/score/php
@@ -55,4 +55,4 @@ b65593b732d074e5906c63e1501420c7b3963780
 ## Notes for further development
 
 1. To switch to a new external data provider implement a new class that uses the CounApi inerface
-2. Pass the object of the new class to the ScoreCalculator to get the score calculated from the new datasource
+2. Pass the object of the new class to the ScorePersistenceHelper to get the score calculated from the new datasource

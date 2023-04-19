@@ -12,43 +12,50 @@ class ScoreCalculator
     private $api;
     private $resultStatus;
 
-    public function __construct($search_term, CountApi $api)
+    public function __construct($searchTerm, CountApi $api)
     {
         $this->api = $api;
-        $this->rocksCount = $this->api->getRocksCount($search_term);
-        $this->sucksCount = $this->api->getSucksCount($search_term);
+        $this->rocksCount = $this->api->getRocksCount($searchTerm);
+        $this->sucksCount = $this->api->getSucksCount($searchTerm);
         $this->resultStatus = $this->api->getApiStatus();
         $this->checkZeroResults();
     }
 
-    public function getScore(){
-        switch ($this->api->getApiStatus()){
+    public function getScore(): float
+    {
+        switch ($this->api->getApiStatus()) {
             case State::OK:
-                $precise_score = ($this->rocksCount/$this->getTotalCount())*10;
-
-                return round($precise_score, 2);
+                $preciseScore = ($this->rocksCount/$this->getTotalCount())*10;
+                $score = round($preciseScore, 2);
+                break;
 
             case State::Error:
-
-                return -1;
+                $score = -1;
+                break;
 
             case State::ZeroResults:
+                $score = 0;
+                break;
 
-                return 0;
+            default:
+                $score = 3;
         }
+        return $score;
     }
 
-    public function getResultStatus(){
+    public function getResultStatus() :State
+    {
         return $this->resultStatus;
     }
 
-    private function getTotalCount(){
+    private function getTotalCount() :int
+    {
         return $this->rocksCount + $this->sucksCount;
     }
 
     private function checkZeroResults(): void
     {
-        if($this->api->getApiStatus() == State::OK && $this->getTotalCount() == 0 ){
+        if ($this->api->getApiStatus() == State::OK && $this->getTotalCount() == 0) {
             $this->resultStatus = State::ZeroResults;
         }
     }
