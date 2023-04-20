@@ -10,7 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 class ScorePersistenceHelperTest extends TestCase
 {
-    public function test_it_returns_record_form_database_if_found(){
+    public function test_it_returns_record_form_database_if_found()
+    {
 
         $apiMock = $this->createMock(GitHubApi::class);
         $apiMock->method('getSucksCount')->willReturn(1);
@@ -23,14 +24,15 @@ class ScorePersistenceHelperTest extends TestCase
         $resultRepositoryMock = $this->createMock(ResultsRecordRepository::class);
         $resultRepositoryMock->method('findOneBy')->with(['search_term' => $search_term])->willReturn($resultMock);
 
-        $scorePersistHelper = new ScorePersistenceHelper($resultRepositoryMock);
+        $scorePersistHelper = new ScorePersistenceHelper($resultRepositoryMock, $apiMock);
 
-        $result = $scorePersistHelper->getResult($search_term,$apiMock);
+        $result = $scorePersistHelper->getResult($search_term);
 
         $this->assertSame($resultMock, $result);
     }
 
-    public function test_it_returns_new_record_if_none_found_in_database(){
+    public function test_it_returns_new_record_if_none_found_in_database()
+    {
 
         $apiMock = $this->createMock(GitHubApi::class);
         $apiMock->method('getSucksCount')->willReturn(1);
@@ -42,9 +44,9 @@ class ScorePersistenceHelperTest extends TestCase
         $resultRepositoryMock = $this->createMock(ResultsRecordRepository::class);
         $resultRepositoryMock->method('findOneBy')->with(['search_term' => $search_term])->willReturn(null);
 
-        $scorePersistHelper = new ScorePersistenceHelper($resultRepositoryMock);
+        $scorePersistHelper = new ScorePersistenceHelper($resultRepositoryMock, $apiMock);
 
-        $result = $scorePersistHelper->getResult($search_term,$apiMock);
+        $result = $scorePersistHelper->getResult($search_term);
 
         $this->assertSame($search_term, $result->getSearchTerm());
         $this->assertSame(5.0, $result->getScore());
